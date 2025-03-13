@@ -1,10 +1,28 @@
-// import Image from "next/image";
+import { HydrateClient, trpc } from "@/trpc/server";
 
-export default function Home() {
+import { DEFAULT_LIMIT } from "@/constants";
+
+import { HomeView } from "@/modules/home/ui/views/home-view";
+
+export const dynamic = "force-dynamic";
+
+interface PageProps {
+  searchParams: Promise<{
+    categoryId?: string;
+  }>
+};
+
+const Page = async ({ searchParams }: PageProps) => {
+  const { categoryId } = await searchParams;
+
+  void trpc.categories.getMany.prefetch();
+  void trpc.videos.getMany.prefetchInfinite({ categoryId, limit: DEFAULT_LIMIT });
+
   return (
-    <div>
-      {/* <Image src="/logo.svg" height={50} width={50} alt="Logo" />
-      <p className="text-xl font-semibold tracking-tight">NewTube</p> */}
-    </div>
+    <HydrateClient>
+      <HomeView categoryId={categoryId} />
+    </HydrateClient>
   );
-}
+};
+
+export default Page;

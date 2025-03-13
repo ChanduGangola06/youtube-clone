@@ -9,7 +9,9 @@ import { useState } from 'react';
 import { makeQueryClient } from './query-client';
 import type { AppRouter } from './routers/_app';
 import { APP_URL } from '@/constants';
+
 export const trpc = createTRPCReact<AppRouter>();
+
 let clientQueryClientSingleton: QueryClient;
 function getQueryClient() {
   if (typeof window === 'undefined') {
